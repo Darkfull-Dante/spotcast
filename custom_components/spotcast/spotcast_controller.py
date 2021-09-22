@@ -1,3 +1,4 @@
+from _typeshed import NoneType
 import logging
 import random
 import time
@@ -177,9 +178,14 @@ class SpotcastController:
 
     def _getSpotifyConnectDeviceId(self, client, device_name):
         devices_available = get_spotify_devices(self.hass, client._get("me")["id"])
+
+        if devices_available == None:
+            return None
+
         for device in devices_available["devices"]:
             if device["name"] == device_name:
                 return device["id"]
+
         return None
 
     def get_spotify_device_id(self, account, spotify_device_id, device_name, entity_id):
