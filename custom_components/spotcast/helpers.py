@@ -36,6 +36,10 @@ def get_spotify_devices(hass, spotify_user_id):
         _LOGGER.debug("get_spotify_devices: %s", resp)
         return resp
 
+    _LOGGER.error("No spotify media player found. Please verify official Home Assistant Spotify integration is correctly configured.")
+
+    return None
+
 
 def get_cast_devices(hass):
     platforms = entity_platform.async_get_platforms(hass, "cast")
@@ -64,10 +68,11 @@ def async_wrap(func):
 
     return run
 
+
 def get_search_results(search, spotify_client):
 
     _LOGGER.debug("using search query to find uri")
-    
+
     SEARCH_TYPES = ["artist", "album", "track", "playlist"]
 
     search = search.upper()
@@ -77,7 +82,7 @@ def get_search_results(search, spotify_client):
     for searchType in SEARCH_TYPES:
 
         try:
-    
+
             result = spotify_client.search(
                 searchType + ":" + search,
                 limit=1,
