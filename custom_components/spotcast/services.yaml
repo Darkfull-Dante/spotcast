@@ -135,3 +135,72 @@ start:
       default: false
       selector:
         boolean:
+
+transfer_playback:
+  description: "Transfers playback to a device"
+  target:
+    entity:
+      domain: media_player
+  
+  fields:
+    device_name:
+        name: "Device Name"
+        description: "The friendly name of the chromecast or spotify connect device. First checks spotify device list for name (not used together with entity_id and spotify_device_id)."
+        example: "Livingroom"
+        required: false
+        selector:
+          text:
+    spotify_device_id:
+      name: "Spotify Device ID"
+      description: "Advanced users only. The spotify device id (not used together with entity_id or device_name)."
+      example: "4363634563457346xcyvydgf3qwa"
+      required: false
+      selector:
+        text:
+    account:
+      name: "Account"
+      description: "Optionally starts Spotify using an alternative account specified in config."
+      example: "my_wifes"
+      required: false
+      selector:
+        text:
+
+    force_playback:
+      name: "Force Playback"
+      description: "In case of transfering playback: If true starts playing the user's last playback even if nothing is currently playing."
+      example: true
+      required: false
+      default: false
+      selector:
+        boolean:
+    repeat:
+      name: "Repeat"
+      description: "Set repeat mode for playback."
+      example: "track"
+      required: false
+      default: "off"
+      selector:
+        select:
+          options:
+            - "track"
+            - "context"
+            - "off"
+    shuffle:
+      name: "Shuffle"
+      description: "Set shuffle mode for playback."
+      example: true
+      required: false
+      default: false
+      selector:
+        boolean:
+    start_volume:
+      name: "Start Volume"
+      description: "Set the volume for playback in percentage."
+      example: 50
+      required: false
+      selector:
+        number:
+          mode: slider
+          step: 1
+          min: 0
+          max: 100
