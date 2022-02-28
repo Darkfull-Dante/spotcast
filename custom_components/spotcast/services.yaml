@@ -137,7 +137,8 @@ start:
         boolean:
 
 transfer_playback:
-  description: "Transfers playback to a device"
+  name: Transfer Playback
+  description: Transfers playback to a device
   target:
     entity:
       domain: media_player
