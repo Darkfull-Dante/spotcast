@@ -10,6 +10,8 @@ from homeassistant.const import CONF_ENTITY_ID, CONF_OFFSET, CONF_REPEAT
 from homeassistant.core import callback
 import homeassistant.core as ha_core
 
+from custom_components.spotcast.sensor import SCAN_INTERVAL
+
 from .const import (
     CONF_ACCOUNTS,
     CONF_DEVICE_NAME,
@@ -223,7 +225,7 @@ def setup(hass: ha_core.HomeAssistant, config: collections.OrderedDict) -> bool:
                 ignore_fully_played,
             )
 
-        if start_volume <= 100:
+        if start_volume is not None and start_volume <= 100:
             _LOGGER.debug("Setting volume to %d", start_volume)
             time.sleep(2)
             client.volume(volume_percent=start_volume, device_id=spotify_device_id)
@@ -236,6 +238,48 @@ def setup(hass: ha_core.HomeAssistant, config: collections.OrderedDict) -> bool:
             time.sleep(3)
             client.repeat(state=repeat, device_id=spotify_device_id)
 
+    def transfer_playback(call: ha_core.ServiceCall):
+
+        account = call.data.get(CONF_SPOTIFY_ACCOUNT)
+        device_name = call.data.get(CONF_DEVICE_NAME)
+        entity_id = call.data.get(CONF_ENTITY_ID)
+        spotify_device_id = call.data.get(CONF_SPOTIFY_DEVICE_ID)
+        repeat = call.data.get(CONF_REPEAT, False)
+        shuffle = call.data.get(CONF_SHUFFLE, False)
+        start_volume = call.data.get(CONF_START_VOL)
+        force_playback = call.data.get(CONF_FORCE_PLAYBACK)
+
+        client = spotcast_controller.get_spotify_client(account)
+
+        # first, rely on spotify id given in config otherwise get one
+        if not spotify_device_id:
+            spotify_device_id = spotcast_controller.get_spotify_device_id(
+                account, spotify_device_id, device_name, entity_id
+            )
+
+        _LOGGER.debug("Transfering playback")
+        current_playback = client.current_playback()
+        if current_playback is not None:
+            _LOGGER.debug("Current_playback from spotify: %s", current_playback)
+            force_playback = True
+        _LOGGER.debug("Force playback: %s", force_playback)
+        client.transfer_playback(
+            device_id=spotify_device_id, force_play=force_playback
+        )
+
+        if start_volume is not None and start_volume <= 100:
+            _LOGGER.debug("Setting volume to %d", start_volume)
+            time.sleep(2)
+            client.volume(volume_percent=start_volume, device_id=spotify_device_id)
+        if shuffle:
+            _LOGGER.debug("Turning shuffle on")
+            time.sleep(3)
+            client.shuffle(state=shuffle, device_id=spotify_device_id)
+        if repeat:
+            _LOGGER.debug("Turning repeat on")
+            time.sleep(3)
+            client.repeat(state=repeat, device_id=spotify_device_id)
+    
     # Register websocket and service
     hass.components.websocket_api.async_register_command(
         WS_TYPE_SPOTCAST_PLAYLISTS, websocket_handle_playlists, SCHEMA_PLAYLISTS
@@ -257,8 +301,8 @@ def setup(hass: ha_core.HomeAssistant, config: collections.OrderedDict) -> bool:
         SCHEMA_WS_CASTDEVICES,
     )
 
-    hass.services.register(
-        DOMAIN, "start", start_casting, schema=SERVICE_START_COMMAND_SCHEMA
-    )
+    hass.services.register(DOMAIN, "start", start_casting)
+
+    hass.services.register(DOMAIN, "transfer_playback", transfer_playback)
 
     return True

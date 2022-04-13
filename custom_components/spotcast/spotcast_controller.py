@@ -147,7 +147,8 @@ class SpotifyToken:
             )
             expires = self._token_expires - int(time.time())
             return self._access_token, expires
-        except:  # noqa: E722
+        except Exception as e: # noqa: E722
+            _LOGGER.error(e)  
             raise HomeAssistantError("Could not get spotify token")
 
 

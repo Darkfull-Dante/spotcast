@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Final
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
@@ -89,6 +90,9 @@ SERVICE_START_COMMAND_SCHEMA = vol.Schema(
         vol.Optional(CONF_IGNORE_FULLY_PLAYED, default=False): cv.boolean,
     }
 )
+
+SERVICE_TRANSFER_PLAYBACK_SCHEMA: Final = "transfer_playback"
+
 
 ACCOUNTS_SCHEMA = vol.Schema(
     {

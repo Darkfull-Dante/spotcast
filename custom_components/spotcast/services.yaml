@@ -1,5 +1,5 @@
 start:
-  description: Starts spotify playback on chromecast devices
+  description: "[Legacy] Starts spotify playback on chromecast devices"
   fields:
     device_name:
       name: "Device Name"
@@ -139,10 +139,6 @@ start:
 transfer_playback:
   name: Transfer Playback
   description: Transfers playback to a device
-  target:
-    entity:
-      domain: media_player
-  
   fields:
     device_name:
         name: "Device Name"
@@ -158,6 +154,15 @@ transfer_playback:
       required: false
       selector:
         text:
+    entity_id:
+      name: "Entity ID"
+      description: "The entity_id of the chromecast mediaplayer. Friendly name MUST match the spotify connect device name (not used together with device_name and spotify_device_id)."
+      example: "media_player.vardagsrum"
+      required: false
+      selector:
+        entity:
+          domain: media_player
+          integration: cast
     account:
       name: "Account"
       description: "Optionally starts Spotify using an alternative account specified in config."
@@ -165,7 +170,6 @@ transfer_playback:
       required: false
       selector:
         text:
-
     force_playback:
       name: "Force Playback"
       description: "In case of transfering playback: If true starts playing the user's last playback even if nothing is currently playing."
