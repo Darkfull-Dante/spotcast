@@ -1,8 +1,8 @@
 # Spotcast
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 [![spotcast](https://img.shields.io/github/release/fondberg/spotcast.svg?1)](https://github.com/fondberg/spotcast)
-![Maintenance](https://img.shields.io/maintenance/yes/2021.svg)
+![Maintenance](https://img.shields.io/maintenance/yes/2022.svg)
 
 [![Buy me a coffee](https://img.shields.io/static/v1.svg?label=Buy%20me%20a%20coffee&message=🥨&color=black&logo=buy%20me%20a%20coffee&logoColor=white&labelColor=6f4e37)](https://www.buymeacoffee.com/fondberg)
 
@@ -47,20 +47,22 @@ To obtain the cookies, these different methods can be used:
 
 ##### Settings page
 
-1. Make sure you are connected on [`https://open.spotify.com`](https://open.spotify.com)
-2. Open the url [`chrome://settings/cookies/detail?site=spotify.com`](chrome://settings/cookies/detail?site=spotify.com)
-3. Copy the content from `sp_dc` and `sp_key` cookies
+1. Open [`https://open.spotify.com`](https://open.spotify.com). If you are already logged in, log out of Spotify.
+2. Login to Spotify (this will ensure you get new cookies that are valid for 1 year). 
+3. Open the url [`chrome://settings/cookies/detail?site=spotify.com`](chrome://settings/cookies/detail?site=spotify.com).
+4. Copy the content from `sp_dc` and `sp_key` cookies.
+5. Close the window without logging out (Otherwise the cookies are made invalid).
 
 ![cookie in chrome settings](images/cookies_chrome_1.png)
 
 ##### Chrome web console
 
-1. Make sure [`https://open.spotify.com`](https://open.spotify.com) is opened and you are connected
-
+1. Open a new __Incognito window__ at [`https://open.spotify.com`](https://open.spotify.com) and login to Spotify.
 2. Press `Command+Option+I` (Mac) or `Control+Shift+I` or `F12`. This should open the developer tools menu of your browser.
-3. Go into the `application` section
-4. In the menu on the left go int `Storage/Cookies/open.spotify.com`
-5. Find the `sp_dc` and `sp_key` and copy the values
+3. Go into the `application` section.
+4. In the menu on the left go int `Storage/Cookies/open.spotify.com`.
+5. Find the `sp_dc` and `sp_key` and copy the values.
+6. Close the window without logging out (Otherwise the cookies are made invalid).
 
 ![cookie in chrome developer tools](images/cookies_chrome_2.png)
 
@@ -68,26 +70,14 @@ To obtain the cookies, these different methods can be used:
 
 ##### Firefox web console
 
-1. Make sure [`https://open.spotify.com`](https://open.spotify.com) is opened and you are connected
+1. Open a new __Incognito window__ at [`https://open.spotify.com`](https://open.spotify.com) and login to Spotify.
 2. Press `Command+Option+I` (Mac) or `Control+Shift+I` or `F12`. This should open the developer tools menu of your browser.
-3. Go into the `Storage` section. (You might have to click on the right arrows to reveal the section)
-4. Select the `Cookies` sub-menu and then `https://open.spotify.com`
-5. Find the `sp_dc` and `sp_key` and copy the values
+3. Go into the `Storage` section. (You might have to click on the right arrows to reveal the section).
+4. Select the `Cookies` sub-menu and then `https://open.spotify.com`.
+5. Find the `sp_dc` and `sp_key` and copy the values.
+6. Close the window without logging out (Otherwise the cookies are made invalid).
 
-![Firefox developer tool](images/cookies_firefox_1.png) 
-
-#### Other methods
-
-##### Incognito mode
-
-1. Open a new __Incognito window__ at [https://accounts.spotify.com/en/login?continue=https:%2F%2Fopen.spotify.com%2F](https://accounts.spotify.com/en/login?continue=https:%2F%2Fopen.spotify.com%2F)
-2. Open Developer Tools in your browser (might require developer menu to be enabled in some browsers)
-3. Login to Spotify
-4. Search/Filter for `get_access_token` in Developer tools under Network.
-5. Under cookies for the request save the values for `sp_dc` and `sp_key`
-6. Close the window without logging out (Otherwise the cookies are made invalid)
-
-![Screenshots](images/cookies_1.jpg)
+![Firefox developer tool](images/cookies_firefox_1.png)
 
 ### Single account
 
@@ -151,22 +141,22 @@ The spotcast custom component creates a service called 'spotcast.start' in Home 
 
 ### Start playback on Spotify connect device
 
-```json
-{
-  "spotify_device_id" : "ab123c5d7347324c2b1234567890f8d6dc40350",
-  "uri" : "spotify:playlist:37i9dQZF1DX3yvAYDslnv8",
-  "random_song": true
-}
+```yaml
+- service: spotcast.start
+  data:
+    spotify_device_id: "ab123c5d7347324c2b1234567890f8d6dc40350"
+    uri: "spotify:playlist:37i9dQZF1DX3yvAYDslnv8"
+    random_song: true
 ```
 
 ### Start playback on a device with default account
 
-```json
-{
-  "device_name" : "Kök",
-  "uri" : "spotify:playlist:37i9dQZF1DX3yvAYDslnv8",
-  "random_song": true
-}
+```yaml
+- service: spotcast.start
+  data:
+    device_name: "Kitchen"
+    uri: "spotify:playlist:37i9dQZF1DX3yvAYDslnv8"
+    random_song: true
 ```
 
 where:
@@ -179,26 +169,26 @@ where:
 * `country` restrict country to use when looking for playlists inside a category
 * `limit` restrict number of playlists to return when looking in a category. Note that only a single playlist will be chosen randomly from them.
 * `random_song` optional parameter that starts the playback at a random position in the playlist
-* `repeat` optional parameter that repeats the playlist/track
+* `repeat` optional parameter that repeats the playlist/track (track|context|off)
 * `shuffle` optional parameter to set shuffle mode for playback
 * `offset` optional parameter to set offset mode for playback. 0 is the first song
 
 Optionally you can specify the `entity_id` of an existing Home Assistant chromecast media-player like:
 
-```json
-{
-  "entity_id" : "media_player.vardagsrum",
-  "uri" : "spotify:playlist:37i9dQZF1DX3yvAYDslnv8"
-}
+```yaml
+- service: spotcast.start
+  data:
+    entity_id: "media_player.vardagsrum"
+    uri: "spotify:playlist:37i9dQZF1DX3yvAYDslnv8"
 ```
 
 ### Find Spotify Device ID
 
 To use the Spotcast service with a Spotify Connect device, you need the `spotify_device_id`. To find the `spotify_device_id`, multiple option are available.
 
-#### With Spotify developper portal
+#### With Spotify developer portal
 
-1. Go to [Spotify developper console](https://developer.spotify.com/console/get-users-available-devices/)
+1. Go to [Spotify developer console](https://developer.spotify.com/console/get-users-available-devices/)
 2. Click `GET TOKEN` <br/>
 ![get_token](./images/get_token.png)
 3. Select `user-read-playback-state` as a scope<br/>
@@ -228,7 +218,7 @@ To use the Spotcast service with a Spotify Connect device, you need the `spotify
 7. The request URL looks something like this: `https://gew1-spclient.spotify.com/connect-state/v1/connect/transfer/from/my_web_player_device_id/to/my_sonos_device_id`
 8. The `my_sonos_device_id` is the `spotify_device_id` you are looking for.
 
-##### Log exemple
+##### Log example
 
 ```LOG
 2022-01-13 19:10:35 DEBUG (SyncWorker_0) [custom_components.spotcast.helpers] get_spotify_devices: media_player.spotify_felix: Spotify Félix Cusson: [{'id': '################################', 'is_active': True, 'is_private_session': False, 'is_restricted': False, 'name': 'Salon', 'type': 'CastAudio', 'volume_percent': 16}]
@@ -241,54 +231,53 @@ To use the Spotcast service with a Spotify Connect device, you need the `spotify
 ### Automation example
 
 ```yaml
-- id: 'jul_spotify_spela_julmusik'
-  alias: Jul spela julmusik
+- id: 'christmas_play_christmas_music'
+  alias: Christmas play Christmas music
   initial_state: 'on'
   trigger:
   - event_data:
-      id: remote_fonsterlampor
+      id: remote_windowlamps
       event: 5002
     platform: event
     event_type: deconz_event
   condition: []
   action:
-  - data:
+  - service: spotcast.start
+    data:
       uri: 'spotify:playlist:56Bor5fbMJlJV7oryb2p3k'
       random_song: true
       shuffle: true
       start_volume: 50
-      entity_id: media_player.gh_kok
-    service: spotcast.start
+      entity_id: media_player.kitchen
 ```
 
 ```yaml
 - service: spotcast.start
   data:
-    search: "Brown Bird"
-    # resolve to spotify:artist:5zzbSFZMVpvxSlWAkqqtHP at the time of writing
+    search: "Brown Bird" # resolves to spotify:artist:5zzbSFZMVpvxSlWAkqqtHP at the time of writing
     random_song: true
     shuffle: true
     start_volume: 50
-    entity_id: media_player.cuisine
+    entity_id: media_player.kitchen
 ```
 
 ### Transfer current playback for the account
 
 Omitting `uri` will transfer the playback to the specified device.
 
-```json
-{
-  "device_name" : "Högtalare uppe"
-}
+```yaml
+- service: spotcast.start
+  data:
+    device_name: "Speaker kitchen"
 ```
 
 Use the parameter `force_playback` to continue the user's playback even if nothing is currently playing.
 
-```json
-{
-  "device_name" : "MultiRoom",
-  "force_playback" : true
-}
+```yaml
+- service: spotcast.start
+  data:
+    device_name: "Speaker kitchen"
+    force_playback: true
 ```
 
 where:
@@ -298,12 +287,12 @@ where:
 
 ### Start playback on a device with non default account
 
-```json
-{
-  "account":"niklas",
-  "device_name" : "Kök",
-  "uri" : "spotify:playlist:37i9dQZF1DX3yvAYDslnv8"
-}
+```yaml
+- service: spotcast.start
+  data:
+    account: "niklas"
+    device_name: "Speaker kitchen"
+    uri: "spotify:playlist:37i9dQZF1DX3yvAYDslnv8"
 ```
 
 where:
@@ -312,17 +301,17 @@ where:
 * `device_name` is the friendly name of the chromecast
 * `uri` is the Spotify uri, supports all uris including track (limit to one track)
 
-#### start podcast playack
+### Start podcast playback
 
 Play the latest episode of a given podcast show.
 
-```json
-{
-  "account":"niklas",
-  "device_name" : "Kök",
-  "uri" : "spotify:show:6PeAI9SHRZhghU7NRPXvT3",
-  "ignore_fully_played": true
-}
+```yaml
+- service: spotcast.start
+  data:
+    account: "niklas"
+    device_name: "Speaker kitchen"
+    uri: "spotify:show:6PeAI9SHRZhghU7NRPXvT3"
+    ignore_fully_played: true
 ```
 
 where
@@ -330,7 +319,7 @@ where
 * `account` is the name of account key in the accounts dictionary in the configuration
 * `device_name` is the friendly name of the Chromecast
 * `uri` is the spotify uri, (podcasts use the 'show' uri)
-* `ignore_fully_played` (optional) true or false, true to ignore already fully played episodes (defaults to false and play the latest released episode)
+* `ignore_fully_played` (optional) true or false, true to ignore already fully played episodes (defaults to false and plays the latest released episode)
 
 ## Use the sensor
 
@@ -357,21 +346,21 @@ Attributes
 ```json
 devices_json: [
   {
-    "name": "Kök",
+    "name": "Speaker kitchen",
     "cast_type": "audio",
     "model_name": "Google Home",
     "uuid": "xxxxx",
     "manufacturer": "Google Inc."
   },
   {
-    "name": "Högtalare uppe",
+    "name": "Speakers upstairs",
     "cast_type": "group",
     "model_name": "Google Cast Group",
     "uuid": "xxxx",
     "manufacturer": "Google Inc."
   },
   {
-    "name": "Vardagsrum",
+    "name": "Living room",
     "cast_type": "cast",
     "model_name": "HK Citation 300",
     "uuid": "xxxx",
