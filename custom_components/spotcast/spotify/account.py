@@ -174,7 +174,7 @@ class SpotifyAccount:
             self.apis[name] = Spotify(auth=session.token)
 
         self.is_default = is_default
-        self._base_refresh_rate = 30
+        self._base_refresh_rate = base_refresh_rate
 
         self._datasets: dict[str, Dataset] = {}
         self.last_playback_state = {}
@@ -337,6 +337,7 @@ class SpotifyAccount:
         return profile.get(attribute)
 
     def get_dataset(self, name: str) -> list | dict:
+        """Returns the data of the dataset requested"""
         return self._datasets[name].data
 
     def get_token(self, api: str) -> str:
@@ -791,12 +792,11 @@ class SpotifyAccount:
             devices = await self.async_devices(force=True)
             devices = {x["id"]: x for x in devices}
 
-            try:
-                devices[device_id]
+            if device_id in devices:
                 return
-            except KeyError:
-                LOGGER.debug("Device `%s` not yet available", device_id)
-                await sleep(timeout/4)
+
+            LOGGER.debug("Device `%s` not yet available", device_id)
+            await sleep(timeout/4)
 
         raise AsyncTimeoutError(
             f"device `{device_id}` still not available after {timeout} sec."
@@ -1129,7 +1129,7 @@ class SpotifyAccount:
             "offset": offset,
         }
 
-        return self.apis["private"]._get(url, params)
+        return self.apis["private"]._get(url, params)  # pylint: disable=W0212
 
     async def _async_get_count(
             self,
@@ -1137,7 +1137,6 @@ class SpotifyAccount:
             prepends: list = None,
             appends: list = None,
             sub_layer: str = None,
-            max_items: int = None,
     ) -> int:
         """Returns the number of item in a specific pagination
 

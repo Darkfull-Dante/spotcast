@@ -1,3 +1,5 @@
+"""Websocket Endpoint for getting tracks elements inside a Spotify
+Browse view"""
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 from homeassistant.core import HomeAssistant

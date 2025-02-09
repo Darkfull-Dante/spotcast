@@ -28,7 +28,7 @@ from custom_components.spotcast.config_flow_classes.options_flow_handler \
 LOGGER = getLogger(__name__)
 
 
-class SpotcastFlowHandler(SpotifyFlowHandler, domain=DOMAIN):
+class SpotcastFlowHandler(SpotifyFlowHandler, domain=DOMAIN):  # pylint: disable=W0223
     """Hnadler of the Config Flow for Spotcast
 
     Attributes:

@@ -1,3 +1,4 @@
+"""Websocket Endpoint for getting tracks from a playlist"""
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 from homeassistant.core import HomeAssistant

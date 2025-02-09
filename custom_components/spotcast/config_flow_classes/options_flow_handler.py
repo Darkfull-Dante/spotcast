@@ -37,6 +37,11 @@ class SpotcastOptionsFlowHandler(OptionsFlow):
         )
     }
 
+    def __init__(self):
+        """Handles option configuration via the Integration page"""
+        super().__init__()
+        self._options = copy_to_dict(DEFAULT_OPTIONS)
+
     async def async_step_init(
         self,
         user_input: dict[str] | None = None,
@@ -44,10 +49,11 @@ class SpotcastOptionsFlowHandler(OptionsFlow):
         """Initial Step for the Option Configuration Flow"""
 
         options = copy_to_dict(self.config_entry.options)
+        options = {} if options is None else options
 
         LOGGER.debug("Opening Config menu for `%s`", self.config_entry.title)
 
-        self._options = DEFAULT_OPTIONS | options
+        self._options |= options
 
         LOGGER.debug("Options set to `%s`", self._options)
 

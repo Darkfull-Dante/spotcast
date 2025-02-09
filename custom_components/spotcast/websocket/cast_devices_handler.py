@@ -41,12 +41,12 @@ async def async_get_cast_devices(
 
     devices = []
 
-    for id, entity in entities.items():
+    for key, entity in entities.items():
 
-        cast_info = entity._cast_info.cast_info
+        cast_info = entity._cast_info.cast_info  # pylint: disable=W0212
 
         devices.append({
-            "entity_id": id,
+            "entity_id": key,
             "uuid": str(cast_info.uuid),
             "model_name": cast_info.model_name,
             "friendly_name": cast_info.friendly_name,

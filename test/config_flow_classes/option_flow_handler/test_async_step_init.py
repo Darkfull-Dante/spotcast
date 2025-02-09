@@ -46,10 +46,10 @@ class TestWithDefaultSet(IsolatedAsyncioTestCase):
         }
 
         self.handler = SpotcastOptionsFlowHandler()
-        self.handler._options = None
         self.handler.handler = "foo"
         self.handler.hass = self.mocks["hass"]
         self.handler.async_show_form = MagicMock()
+        self.handler._config_entry = self.mocks["entry"]
 
         await self.handler.async_step_init({})
 

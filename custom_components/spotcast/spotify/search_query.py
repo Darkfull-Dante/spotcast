@@ -1,5 +1,7 @@
 """Module for the SearchQuery class"""
 
+from homeassistant.helpers import config_validation as cv
+
 from custom_components.spotcast.spotify.exceptions import (
     InvalidFilterError,
     InvalidTagsError,
@@ -8,6 +10,31 @@ from custom_components.spotcast.spotify.exceptions import (
 
 
 class SearchQuery:
+    """A Spotify Search Query
+
+    Attributes:
+        search(str): the search query to run
+        item_types(list[str]): list of items to accept from the search
+            query
+        filters(dict[str,str]): a doctionary of filters to apply and
+            there filtering values
+        tags(list[str]): a list of tags to filter the query
+        query_string(str): the query string ready to be passed to the
+            Spotify API
+        item_types_string(str): a properly format list of item_types to
+            retrive formatted for the api call
+
+    Constants:
+        ALLOWED_FILTERS(tuple[str]): A tuple of all the allowed filters
+        ALLOWED_TAGS(tuple[str]): A tuple of all the allowed tags
+        ALLOWED_ITEM_TYPE(tuple[str]): A tuple of all allowed item
+            types
+
+    ClassMethods:
+        raise_on_invalid_tags
+        raise_on_invalid_filters
+        raise_on_invalid_item_type
+    """
 
     ALLOWED_FILTERS = (
         "album",
@@ -41,12 +68,23 @@ class SearchQuery:
             filters: dict[str, str] = None,
             tags: list[str] = None,
     ):
+        """A Spotify Search Query
+
+        Attributes:
+            search(str): the search query to run
+            item_types(str | list[str]): list of items to accept from
+                the search query
+            filters(dict[str,str], optional): a doctionary of filters
+                to apply and there filtering values, if None
+                instantiates an empty dictionary. Defaults to None
+            tags(list[str], optional): a list of tags to filter the
+                query. If None, instantiates an empty list. Defaults
+                to None.
+        """
 
         filters = {} if filters is None else filters
         tags = [] if tags is None else tags
-        item_types = item_types if isinstance(item_types, list) else [
-            item_types
-        ]
+        item_types = cv.ensure_list(item_types)
 
         self.raise_on_invalid_filters(filters)
         self.raise_on_invalid_tags(tags)
