@@ -7,7 +7,6 @@ from custom_components.spotcast.chromecast.spotify_controller import (
     SpotifyController,
     SpotifyAccount,
     CastMessage,
-    UnknownMessageError,
 )
 
 

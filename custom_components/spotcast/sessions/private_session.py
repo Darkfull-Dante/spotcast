@@ -8,12 +8,11 @@ Classes:
 """
 
 from time import time
-from asyncio import Lock
-from aiohttp import ClientSession
-from aiohttp.client_exceptions import ContentTypeError, ClientOSError
 from types import MappingProxyType
 from logging import getLogger
 
+from aiohttp import ClientSession
+from aiohttp.client_exceptions import ContentTypeError
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.config_entry_oauth2_flow import (
     CLOCK_OUT_OF_SYNC_MAX_SEC,
@@ -22,9 +21,6 @@ from homeassistant.config_entries import ConfigEntry
 
 from custom_components.spotcast.sessions.connection_session import (
     ConnectionSession,
-)
-from custom_components.spotcast.sessions.retry_supervisor import (
-    RetrySupervisor,
 )
 from custom_components.spotcast.sessions.exceptions import (
     TokenRefreshError,
@@ -145,9 +141,9 @@ class PrivateSession(ConnectionSession):
 
                 try:
                     await self.async_refresh_token()
-                    self.supervisor._is_healthy = True
+                    self.supervisor.is_healthy = True
                 except self.supervisor.SUPERVISED_EXCEPTIONS as exc:
-                    self.supervisor._is_healthy = False
+                    self.supervisor.is_healthy = False
                     self.supervisor.log_message(exc)
                     not_ready = True
 

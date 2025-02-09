@@ -49,7 +49,7 @@ def entity_from_target_selector(
 
     count = 0
 
-    for key, value in media_players.items():
+    for value in media_players.values():
         count += len(value)
 
     if count > 1:
@@ -136,6 +136,19 @@ def clean_extras(extras: dict, keep: Iterable) -> dict:
 
 
 def find_category(categories: dict, category_str: str) -> dict:
+    """Finds a category with a best match validation using fuzzy
+    finding
+
+    Args:
+        categories(dict): list of categories
+        category_str(str): the query string for finding the category
+
+    Returns:
+        dict: the dictionary of the category that was matched
+
+    Raises:
+        InvalidCategoryError: raised if no category matches the query
+    """
 
     try:
         return fuzzy_match(categories, category_str, "name")

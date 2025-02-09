@@ -1,3 +1,4 @@
+# pylint: disable=C0302
 """Module for the spotify account class
 
 Classes:
@@ -8,7 +9,7 @@ from logging import getLogger
 from asyncio import (
     run_coroutine_threadsafe,
     sleep,
-    TimeoutError,
+    TimeoutError as AsyncTimeoutError,
 )
 from time import time
 from typing import Any
@@ -32,10 +33,6 @@ from custom_components.spotcast.spotify.utils import select_image_url
 from custom_components.spotcast.spotify.exceptions import (
     PlaybackError,
     TokenError,
-)
-from custom_components.spotcast.sessions.exceptions import (
-    InternalServerError,
-    UpstreamServerNotready,
 )
 
 
@@ -782,14 +779,14 @@ class SpotifyAccount:
                 raising an error.
 
         Raises:
-            - TimeoutError: raised when waiting for the device goes
+            - AsyncTimeoutError: raised when waiting for the device goes
                 beyond the set delay
         """
         LOGGER.debug("Waiting for device `%s` to become available", device_id)
 
         end_time = time() + timeout
 
-        while (time() <= end_time):
+        while time() <= end_time:
 
             devices = await self.async_devices(force=True)
             devices = {x["id"]: x for x in devices}
@@ -801,7 +798,7 @@ class SpotifyAccount:
                 LOGGER.debug("Device `%s` not yet available", device_id)
                 await sleep(timeout/4)
 
-        raise TimeoutError(
+        raise AsyncTimeoutError(
             f"device `{device_id}` still not available after {timeout} sec."
         )
 

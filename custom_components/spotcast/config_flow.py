@@ -5,7 +5,7 @@ Classes:
     - SpotcastOptionsFlowHandler
 """
 
-from custom_components.spotcast.config_flow_classes import (
+from custom_components.spotcast.config_flow_classes import (  # pylint: disable=W0611
     SpotcastFlowHandler,
     SpotcastOptionsFlowHandler,
     DEFAULT_OPTIONS,

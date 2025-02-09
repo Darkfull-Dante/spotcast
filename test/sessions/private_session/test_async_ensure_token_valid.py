@@ -6,10 +6,12 @@ from time import time
 
 from homeassistant.core import HomeAssistant
 
+from custom_components.spotcast.sessions.retry_supervisor import (
+    RetrySupervisor
+)
 from custom_components.spotcast.sessions.private_session import (
     PrivateSession,
     ConfigEntry,
-    RetrySupervisor,
     UpstreamServerNotready,
     InternalServerError,
 )

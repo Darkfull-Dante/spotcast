@@ -79,7 +79,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if updated_options != entry.options:
         hass.config_entries.async_update_entry(entry, options=updated_options)
 
-    # because of circular depoendency
+    # because of circular dependency
     from custom_components.spotcast.spotify.account import SpotifyAccount  # pylint: disable=C0415
 
     try:

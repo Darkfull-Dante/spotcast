@@ -10,7 +10,10 @@ from logging import getLogger, ERROR, DEBUG
 from urllib3.exceptions import ReadTimeoutError
 from aiohttp.client_exceptions import ClientOSError, ClientConnectorError
 
-from requests.exceptions import ReadTimeout, ConnectionError
+from requests.exceptions import (
+    ReadTimeout,
+    ConnectionError as RequestsConnError
+)
 
 from custom_components.spotcast.sessions.exceptions import (
     InternalServerError,
@@ -21,6 +24,21 @@ LOGGER = getLogger(__name__)
 
 
 class RetrySupervisor:
+    """Supervisor for retrying attempts at connecting to an API.
+    Handles clean error management and logs to appropriate levels
+    according to the number of prior consecutive failed attempts
+
+    Attributes:
+        communication_count(int): number of consecutive failed attempts
+        is_healthy(bool): True if currently able to communicate with
+            server
+        next_retry(int): timestamp when a next retry should be
+            attempted
+
+    Methods:
+        failed
+        log_message
+    """
 
     SUPERVISED_EXCEPTIONS = (
         ReadTimeout,
@@ -29,10 +47,14 @@ class RetrySupervisor:
         UpstreamServerNotready,
         ClientConnectorError,
         ClientOSError,
-        ConnectionError,
+        RequestsConnError,
     )
 
     def __init__(self):
+        """Supervisor for retrying attempts at connecting to an API.
+        Handles clean error management and logs to appropriate levels
+        according to the number of prior consecutive failed attempts
+        """
         self._is_healthy = True
         self._next_retry = 0
         self.communication_counter = 0

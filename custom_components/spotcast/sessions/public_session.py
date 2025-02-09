@@ -9,11 +9,9 @@ Functions:
 """
 
 from typing import cast
-from aiohttp import ClientError, ClientOSError, ClientResponseError
-from aiohttp.client_exceptions import ClientConnectorError
-from asyncio import Lock
 from logging import getLogger
 
+from aiohttp import ClientResponseError
 from homeassistant.helpers.config_entry_oauth2_flow import (
     OAuth2Session,
     client,
@@ -79,7 +77,7 @@ class PublicSession(ConnectionSession, OAuth2Session):
             if not self.supervisor.is_ready:
                 not_ready = True
 
-            if self.valid_token:
+            elif self.valid_token:
                 return
 
             else:
@@ -96,15 +94,15 @@ class PublicSession(ConnectionSession, OAuth2Session):
                         self.entry,
                         data=new_data,
                     )
-                    self._is_healthy = True
+                    self.supervisor.is_healthy = True
 
                 except self.supervisor.SUPERVISED_EXCEPTIONS as exc:
-                    self.supervisor._is_healthy = False
+                    self.supervisor.is_healthy = False
                     self.supervisor.log_message(exc)
                     not_ready = True
                 except ClientResponseError as exc:
                     LOGGER.error("Unable to refresh Spotify Public API Token")
-                    raise TokenRefreshError(exc)
+                    raise TokenRefreshError(exc) from exc
 
         if not_ready:
             raise UpstreamServerNotready("Server not ready for refresh")

@@ -29,14 +29,14 @@ class SpotifyFollowersSensor(SpotcastSensor):
 
     async def _async_update_process(self):
         """Updates the number of followers asynchornously"""
-        self._profile = await self.account.async_profile()
+        profile = await self.account.async_profile()
 
         LOGGER.debug(
             "Getting Spotify followers for account `%s`",
             self.account.name
         )
 
-        follower_count = self._profile["followers"]["total"]
+        follower_count = profile["followers"]["total"]
 
         LOGGER.debug(
             "Found %d followers for spotify account `%s`",

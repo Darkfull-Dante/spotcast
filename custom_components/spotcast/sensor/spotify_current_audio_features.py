@@ -18,8 +18,7 @@ LOGGER = getLogger(__name__)
 
 
 class AbstractAudioFeatureSensor(SpotcastSensor):
-    """A Home Assistant sensor reporting information about the profile
-    of a Spotify Account
+    """A Home Assistant sensor reporting audio feature information
 
     Methods:
         - async_update
@@ -53,6 +52,7 @@ class AbstractAudioFeatureSensor(SpotcastSensor):
 
 
 class AbstractPercentSensor(AbstractAudioFeatureSensor):
+    """A Home Assistant sensor reporting a percentage value"""
     UNITS_OF_MEASURE = "%"
     _attr_suggested_display_precision = 1
 
@@ -61,17 +61,21 @@ class AbstractPercentSensor(AbstractAudioFeatureSensor):
 
 
 class CurrentTrackDanceabilitySensor(AbstractPercentSensor):
+    """A Home Assistant sensor reporting the danceability percentage of
+    a song"""
     FEATURE_NAME = "danceability"
     ICON = "mdi:dance-ballroom"
 
 
 class CurrentTrackEnergySensor(AbstractPercentSensor):
+    """A Home Assistant sensor reporting the percentage of energy of
+    the song"""
     FEATURE_NAME = "energy"
     ICON = "mdi:lightning-bolt"
 
 
 class CurrentTrackKeySensor(AbstractAudioFeatureSensor):
-
+    """A Home Assistant sensor reporting the key the song is in"""
     FEATURE_NAME = "key"
     STATE_CLASS = None
     ICON = "mdi:language-csharp"
@@ -92,13 +96,15 @@ class CurrentTrackKeySensor(AbstractAudioFeatureSensor):
 
     def _cleanup(self, feature: int) -> str:
 
-        if feature >= 0 and feature < len(self.KEYS):
+        if 0 <= feature < len(self.KEYS):
             return self.KEYS[feature]
 
         return "-"
 
 
 class CurrentTrackLoudnessSensor(AbstractAudioFeatureSensor):
+    """A Home Assistant sensor reporting the loudness of the song in
+    decibel"""
     FEATURE_NAME = "loudness"
     UNITS_OF_MEASURE = "dB"
     ICON = "mdi:bullhorn"
@@ -123,6 +129,7 @@ class CurrentTrackLoudnessSensor(AbstractAudioFeatureSensor):
 
 
 class CurrentTrackModeSensor(AbstractAudioFeatureSensor):
+    """A Home Assistant sensor reporting the mode the song is in"""
     FEATURE_NAME = "mode"
     STATE_CLASS = None
     ICON = "mdi:music"
@@ -132,11 +139,15 @@ class CurrentTrackModeSensor(AbstractAudioFeatureSensor):
 
 
 class CurrentTrackSpeechinessSensor(AbstractPercentSensor):
+    """A Home Assistant sensor reporting the percentage of speechiness
+    of the current song as a percentage"""
     FEATURE_NAME = "speechiness"
     ICON = "mdi:speaker-message"
 
 
 class CurrentTrackAcousticnessSensor(AbstractPercentSensor):
+    """A Home Assistant sensor reporting the level of acousticness of
+    the current song"""
     FEATURE_NAME = "acousticness"
     ICON = "mdi:guitar-acoustic"
 
@@ -149,16 +160,23 @@ class CurrentTrackAcousticnessSensor(AbstractPercentSensor):
 
 
 class CurrentTrackInstrumentalnessSensor(AbstractPercentSensor):
+    """A Home Assistant sensor reporting the level of instrumentalness
+    of the current song as a percentage"""
     FEATURE_NAME = "instrumentalness"
     ICON = "mdi:piano"
 
 
 class CurrentTrackLivenessSensor(AbstractPercentSensor):
+    """A Home Assistant sensor reporting the likelyhood the song is
+    live as a percentage"""
     FEATURE_NAME = "liveness"
     ICON = "mdi:account-group"
 
 
 class CurrentTrackValenceSensor(AbstractPercentSensor):
+    """A Home Assistant sensor reporting the valence (happy vs. sad)
+    feel of the current song as a percentage. `0` being sad and `100`
+    being happy"""
     FEATURE_NAME = "valence"
     ICON = "mdi:emoticon"
 
@@ -180,6 +198,8 @@ class CurrentTrackValenceSensor(AbstractPercentSensor):
 
 
 class CurrentTrackTempoSensor(AbstractAudioFeatureSensor):
+    """A Home Asssistant sensor reporting the tempo of a song in beats
+    per minute"""
     FEATURE_NAME = "tempo"
     UNITS_OF_MEASURE = "bpm"
     ICON = "mdi:metronome"
@@ -187,6 +207,8 @@ class CurrentTrackTempoSensor(AbstractAudioFeatureSensor):
 
 
 class CurrentTrackTimeSignatureSensor(AbstractAudioFeatureSensor):
+    """A Home Assistant sensor reporting the time signature of the song
+    as its fractional time signature"""
     FEATURE_NAME = "time_signature"
     STATE_CLASS = None
     ICON = "mdi:music-clef-treble"

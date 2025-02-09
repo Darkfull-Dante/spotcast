@@ -10,7 +10,6 @@ from custom_components.spotcast.services.transfer_playback import (
     HomeAssistant,
     ServiceCall,
     SpotifyAccount,
-    ServiceValidationError,
 )
 
 from test.services.transfer_playback import TEST_MODULE

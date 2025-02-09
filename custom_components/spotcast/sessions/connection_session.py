@@ -20,6 +20,21 @@ SUPERVISED_ERRORS = (
 
 
 class ConnectionSession(ABC):
+    """A connection manager to an API session
+
+    Attributes:
+        hass(HomeAssistant): The Home Assistant instance
+        entry(ConfigEntry): the config entry linked to the session
+        supervisor(RetrySupervisor): the retry supervisor that manages
+            attempts to contact the API in case of errors
+        token(str): the current valid token of the session
+        clean_token(str): returns just the token with no additional
+            information
+        is_healthy(bool): returns True if the session is healthy
+
+    Constants:
+        API_ENDPOINT(str): the host address for the API
+    """
 
     API_ENDPOINT = None
 

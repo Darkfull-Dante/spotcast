@@ -37,9 +37,8 @@ async def async_add_to_queue(hass: HomeAssistant, call: ServiceCall):
 
     if playback_state == {}:
         raise NoActivePlaybackError(
-            "No active playback active for account `%s`. Active "
+            f"No active playback active for account `{account.id}`. Active "
             "playback is required to add to queue",
-            account.id
         )
 
     for uri in uris:

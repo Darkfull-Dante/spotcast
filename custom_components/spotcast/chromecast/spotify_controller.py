@@ -19,7 +19,6 @@ from custom_components.spotcast.media_player.chromecast_player import (
 
 from custom_components.spotcast.chromecast.exceptions import (
     AppLaunchError,
-    UnknownMessageError,
 )
 
 LOGGER = getLogger(__name__)
@@ -172,7 +171,7 @@ class SpotifyController(BaseController):
 
         try:
             return handlers[message_type](_message, data)
-        except KeyError as exc:
+        except KeyError:
             LOGGER.error("Received unknown message `%s`", message_type)
             return True
 

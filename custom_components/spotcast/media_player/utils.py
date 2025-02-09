@@ -193,7 +193,7 @@ async def async_build_from_type(
     if isinstance(entity, CastDevice):
         entity: CastDevice
         media_player = Chromecast(
-            entity._cast_info.cast_info,
+            entity._cast_info.cast_info,  # pylint: disable=W0212
             zconf=ChromeCastZeroconf.get_zeroconf()
         )
 

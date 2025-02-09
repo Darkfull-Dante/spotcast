@@ -1,28 +1,14 @@
 """Module containing the chromecast media player implementation"""
 
 from logging import getLogger
-from uuid import UUID
 from hashlib import md5
 
-from pychromecast import (
-    Chromecast as ParentChromecast,
-    HostServiceInfo,
-    CastInfo,
-)
-
-import pychromecast  # pylint: disable=unused-import
-
-from homeassistant.core import HomeAssistant
-from homeassistant.components.cast.media_player import CastDevice
-from homeassistant.components.cast.helpers import ChromeCastZeroconf
+from pychromecast import Chromecast as ParentChromecast
 
 from custom_components.spotcast.media_player._abstract_player import (
     MediaPlayer
 )
 
-from custom_components.spotcast.media_player.exceptions import (
-    MediaPlayerNotFoundError
-)
 
 LOGGER = getLogger(__name__)
 

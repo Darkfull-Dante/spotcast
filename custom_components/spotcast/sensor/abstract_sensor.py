@@ -1,13 +1,19 @@
 """Module for the abstract SpotcastSensor class"""
 
 from logging import getLogger
+from typing import final, override
 
 from homeassistant.components.sensor import (
     SensorStateClass,
+    SensorEntity,
+)
+
+# imports for object availability
+from homeassistant.components.sensor import (  # pylint: disable=W0611
     SensorEntityDescription,
     EntityCategory,
-    SensorEntity,
     SensorDeviceClass,
+
 )
 
 from custom_components.spotcast.spotify import SpotifyAccount
@@ -41,15 +47,20 @@ class SpotcastSensor(SpotcastEntity, SensorEntity):
 
     def __init__(self, account: SpotifyAccount):
         self._attr_state_class = self.STATE_CLASS
+        self._sensor_option_unit_of_measurement = self.UNITS_OF_MEASURE
         super().__init__(account)
 
+    @final
     @property
-    def unit_of_measurement(self) -> str:
+    @override
+    def unit_of_measurement(self) -> str:  # pylint: disable=W0239
         """Returns the units measured by the sensor"""
         return self.UNITS_OF_MEASURE
 
+    @final
     @property
-    def state(self) -> str | int | float:
+    @override
+    def state(self) -> str | int | float:  # pylint: disable=W0239
         """Returns the currently saved state of the sensor"""
         return self._attr_state
 

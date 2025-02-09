@@ -52,6 +52,15 @@ class DeviceManager:
         account: SpotifyAccount,
         async_add_entitites: AddEntitiesCallback,
     ):
+        """Entity that manages Spotify Devices as they become available
+        and drop from the device list
+
+        Args:
+            account(SpotifyAccount): The Spotify Account used to manage
+                devices
+            async_add_entitites(AddEntitiesCallback): The callback used
+                when creating new entity
+        """
 
         self.tracked_devices: dict[str, SpotifyDevice] = {}
         self.unavailable_devices: dict[str, SpotifyDevice] = {}
@@ -61,45 +70,55 @@ class DeviceManager:
         self.supervisor = RetrySupervisor()
 
     async def async_update(self, _=None):
+        """Function responsible for updating the devices on a regular
+        interval"""
 
         if not self.supervisor.is_ready:
             return
 
         try:
             current_devices = await self._account.async_devices()
-            self.supervisor._is_healthy = True
-            await self.async_manage_devices(current_devices)
+            self.supervisor.is_healthy = True
+            await self._async_manage_devices(current_devices)
         except self.supervisor.SUPERVISED_EXCEPTIONS as exc:
-            self.supervisor._is_healthy = False
+            self.supervisor.is_healthy = False
             self.supervisor.log_message(exc)
 
-    async def async_manage_devices(self, current_devices: dict):
+    async def _async_manage_devices(self, current_devices: dict):
+        """Private method responsible for managing the list of
+        currently available device and create or delete device
+        according to state
+
+        Args:
+            current_devices(dict): A dictionary of currently available
+                devices for a Spotify Account. See API documentation
+                for format.
+        """
         current_devices = {x["id"]: x for x in current_devices}
         remove = []
 
         # remove no longer available devices first
-        for id, device in self.tracked_devices.items():
-            if id not in current_devices:
+        for key, device in self.tracked_devices.items():
+            if key not in current_devices:
                 LOGGER.info(
                     "Marking device `%s` unavailable for account `%s`",
                     device.name,
                     self._account.name
                 )
-                remove.append(id)
-                entity = self.tracked_devices[id]
-                entity.is_unavailable = True
+                remove.append(key)
+                device.is_unavailable = True
 
-        for id in remove:
+        for key in remove:
 
-            device = self.tracked_devices.pop(id)
+            device = self.tracked_devices.pop(key)
 
             if device.device_data["type"] in self.DELETE_ON_UNAVAILABLE:
                 device.async_remove(force_remove=True)
                 self.remove_device(device.device_info["identifiers"])
             else:
-                self.unavailable_devices[id] = device
+                self.unavailable_devices[key] = device
 
-        for id, device in current_devices.items():
+        for key, device in current_devices.items():
 
             device["type"] = self.clean_device_type(device)
 
@@ -112,20 +131,20 @@ class DeviceManager:
                 continue
 
             if (
-                id not in self.tracked_devices
-                and id in self.unavailable_devices
+                key not in self.tracked_devices
+                and key in self.unavailable_devices
             ):
                 LOGGER.info(
                     "Device `%s` has became available again for account `%s`",
                     device["name"],
                     self._account.name,
                 )
-                self.tracked_devices[id] = self.unavailable_devices.pop(id)
-                self.tracked_devices[id].is_unavailable = False
+                self.tracked_devices[key] = self.unavailable_devices.pop(key)
+                self.tracked_devices[key].is_unavailable = False
 
             elif (
-                id not in self.tracked_devices
-                and id not in self.unavailable_devices
+                key not in self.tracked_devices
+                and key not in self.unavailable_devices
             ):
                 LOGGER.info(
                     "Adding New Device `%s` for account `%s`",
@@ -133,7 +152,7 @@ class DeviceManager:
                     self._account.name,
                 )
                 new_device = SpotifyDevice(self._account, device)
-                self.tracked_devices[id] = new_device
+                self.tracked_devices[key] = new_device
                 self.async_add_entities([new_device])
 
         playback_state = await self._account.async_playback_state()
@@ -142,9 +161,9 @@ class DeviceManager:
         if "device" in playback_state:
             playing_id = playback_state["device"]["id"]
 
-        for id, device in self.tracked_devices.items():
+        for key, device in self.tracked_devices.items():
             LOGGER.debug("Updating device info for `%s`", device.name)
-            device.device_data = current_devices[id]
+            device.device_data = current_devices[key]
 
             if device.id == playing_id:
                 LOGGER.debug("Feeding playback state to `%s`", device.name)

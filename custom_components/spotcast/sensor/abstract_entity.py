@@ -3,10 +3,8 @@
 from abc import ABC, abstractmethod
 from logging import getLogger
 
-from homeassistant.components.sensor import (
-    EntityCategory,
-    Entity
-)
+from homeassistant.components.sensor import Entity
+from homeassistant.components.sensor import EntityCategory  # pylint: disable=W0611
 from homeassistant.const import STATE_UNKNOWN, STATE_OFF
 
 from custom_components.spotcast.spotify import SpotifyAccount
@@ -17,7 +15,6 @@ from custom_components.spotcast.sessions.retry_supervisor import (
 
 LOGGER = getLogger(__name__)
 POTENTIAL_ERRORS = RetrySupervisor.SUPERVISED_EXCEPTIONS + (TokenError,)
-ENTITY_CATEGORIES = EntityCategory
 
 
 class SpotcastEntity(ABC, Entity):
@@ -104,9 +101,9 @@ class SpotcastEntity(ABC, Entity):
     def _generic_id(self) -> str:
         """Constructs a generic id used for the entity_id"""
         if self.GENERIC_ID is None:
-            id = self.GENERIC_NAME.lower()
-            id = id.replace(" ", "_")
-            return id
+            generic_id = self.GENERIC_NAME.lower()
+            generic_id = generic_id.replace(" ", "_")
+            return generic_id
 
         return self.GENERIC_ID
 

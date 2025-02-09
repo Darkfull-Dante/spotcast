@@ -9,7 +9,7 @@ from custom_components.spotcast.spotify.account import (
     PublicSession,
     PrivateSession,
     HomeAssistant,
-    TimeoutError,
+    AsyncTimeoutError,
     Spotify,
 )
 
@@ -59,7 +59,7 @@ class TestDeviceBecomingAvailable(IsolatedAsyncioTestCase):
 
         try:
             await self.account.async_wait_for_device("bar", timeout=1)
-        except TimeoutError:
+        except AsyncTimeoutError:
             self.fail("Function raised a timeout error")
 
 
@@ -101,5 +101,5 @@ class TestDeviceNeverAvailable(IsolatedAsyncioTestCase):
         self.account.async_devices = AsyncMock()
         self.account.async_devices.return_value = [{"id": "foo"}]
 
-        with self.assertRaises(TimeoutError):
+        with self.assertRaises(AsyncTimeoutError):
             await self.account.async_wait_for_device("bar", timeout=1)

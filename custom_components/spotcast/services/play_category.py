@@ -5,12 +5,12 @@ Functions:
 """
 
 from logging import getLogger
+from random import choice
 
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv
 from homeassistant.util.read_only_dict import ReadOnlyDict
 import voluptuous as vol
-from random import choice
 
 
 from custom_components.spotcast.spotify import SpotifyAccount

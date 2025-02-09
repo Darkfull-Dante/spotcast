@@ -1,7 +1,7 @@
 """Module to test the async_setup function"""
 
 from unittest import IsolatedAsyncioTestCase
-from unittest.mock import MagicMock, AsyncMock, patch
+from unittest.mock import MagicMock, AsyncMock
 
 from custom_components.spotcast import (
     async_setup,

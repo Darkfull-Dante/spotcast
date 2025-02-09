@@ -55,6 +55,14 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
+    """Function responsible for setting up all sensors
+
+    Args:
+        hass(HomeAssistant): The HomeAssistant server
+        entry(ConfigEntry): The config entry to setup sensor for
+        async_add_entites(AddEntitiesCallback): callback function to
+            instanciate a sensor in Home Assistant
+    """
 
     account = await SpotifyAccount.async_from_config_entry(hass, entry)
 

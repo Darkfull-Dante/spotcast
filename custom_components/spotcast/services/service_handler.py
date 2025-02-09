@@ -19,7 +19,7 @@ from custom_components.spotcast.sensor.abstract_entity import POTENTIAL_ERRORS
 LOGGER = getLogger(__name__)
 
 
-class ServiceHandler:
+class ServiceHandler:  # pylint: disable=R0903
     """Handler for Service call that redirect service calls with added
     arguments
 
